@@ -1,13 +1,21 @@
 package com.gani.domain;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 /**
  * Created by Gani on 7/5/17.
  */
+
+@Entity
 public class Product implements DomainObject{
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+
+    @Version
+    private int version;
     private String description;
     private BigDecimal price;
     private String imageUrl;
@@ -22,7 +30,13 @@ public class Product implements DomainObject{
         this.id = id;
     }
 
+    public int getVersion() {
+        return version;
+    }
 
+    public void setVersion(int version) {
+        this.version = version;
+    }
 
     public String getDescription() {
         return description;

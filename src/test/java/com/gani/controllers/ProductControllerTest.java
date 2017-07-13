@@ -42,6 +42,7 @@ public class ProductControllerTest {
     @Before
     public void setUp() throws Exception {
 
+
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(productController).build();
 
@@ -73,6 +74,7 @@ public class ProductControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("product/show"))
                 .andExpect(model().attribute("product", instanceOf(Product.class)));
+
 
     }
 

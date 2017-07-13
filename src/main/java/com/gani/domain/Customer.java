@@ -1,5 +1,7 @@
 package com.gani.domain;
 
+import javax.persistence.*;
+
 /**
  * Created by Gani on 7/7/17.
  */
@@ -9,9 +11,16 @@ package com.gani.domain;
 //The object will have first name, last name, email, phone number, address line one, address line two, city, state, zip code.
 //        All properties are strings. All should be private and have getters and setters.
 
+@Entity
 public class Customer implements DomainObject{
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+
+    @Version
+    private Integer version;
+
     private String firstName;
     private String lastName;
     private String email;
@@ -30,6 +39,14 @@ public class Customer implements DomainObject{
     @Override
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     public String getFirstName() {

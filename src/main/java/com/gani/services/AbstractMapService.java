@@ -1,19 +1,21 @@
 package com.gani.services;
 
+import com.gani.bootstrap.SpringJPABootstrap;
 import com.gani.domain.DomainObject;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.*;
 
 /**
  * Created by Gani on 7/7/17.
  */
-public abstract class AbstractMapService {
+public abstract class AbstractMapService{
 
     protected Map<Integer, DomainObject> domainObjectMap;
 
     public AbstractMapService(){
         domainObjectMap = new HashMap<>();
-        loadDomainObjects();
+//        loadDomainObjects();
     }
 
 
@@ -49,5 +51,5 @@ public abstract class AbstractMapService {
     }
 
 
-    protected abstract void loadDomainObjects();
+//    protected abstract void loadDomainObjects();
 }
