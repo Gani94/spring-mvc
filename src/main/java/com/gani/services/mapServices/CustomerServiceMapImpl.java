@@ -1,9 +1,12 @@
-package com.gani.services;
+package com.gani.services.mapServices;
 
 import com.gani.domain.Customer;
 import com.gani.domain.DomainObject;
+import com.gani.services.CustomerService;
+import com.gani.services.mapServices.AbstractMapService;
+import com.gani.services.security.EncryptionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -14,8 +17,8 @@ import java.util.*;
 
 
 @Service
-@Profile(value = "map")
-public class CustomerServiceImpl extends AbstractMapService implements CustomerService {
+@Profile(value = "mapService")
+public class CustomerServiceMapImpl extends AbstractMapService implements CustomerService {
 
 //    @Override
 //    public void loadDomainObjects() {
@@ -54,6 +57,13 @@ public class CustomerServiceImpl extends AbstractMapService implements CustomerS
 //
 //    }
 
+    private EncryptionService encryptionService;
+
+    @Autowired
+    public void setEncryptionService(EncryptionService encryptionService) {
+        this.encryptionService = encryptionService;
+    }
+
     @Override
     public List<DomainObject> listAll() {
 
@@ -72,6 +82,12 @@ public class CustomerServiceImpl extends AbstractMapService implements CustomerS
 
     @Override
     public Customer createOrUpdate(Customer customer) {
+
+        if(customer.getUser()!=null && customer.getUser().getPassword()!=null){
+            customer.getUser().setEncryptedPassword(
+                    encryptionService.encryptString(customer.getUser().getPassword()));
+        }
+
        return (Customer) super.createOrUpdate(customer);
     }
 

@@ -1,19 +1,20 @@
-package com.gani.services;
+package com.gani.services.mapServices;
 
 import com.gani.domain.DomainObject;
 import com.gani.domain.Product;
+import com.gani.services.ProductService;
+import com.gani.services.mapServices.AbstractMapService;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 /**
  * Created by Gani on 7/5/17.
  */
 @Service
-@Profile(value = "map")
-public class ProductServiceImpl extends AbstractMapService implements ProductService {
+@Profile(value = "mapService")
+public class ProductServiceMapImpl extends AbstractMapService implements ProductService {
 
 //    @Override
 //    protected void loadDomainObjects() {

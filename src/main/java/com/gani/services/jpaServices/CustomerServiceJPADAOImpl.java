@@ -1,6 +1,9 @@
-package com.gani.services;
+package com.gani.services.jpaServices;
 
 import com.gani.domain.Customer;
+import com.gani.services.CustomerService;
+import com.gani.services.security.EncryptionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -15,14 +18,15 @@ import java.util.List;
 
 @Service
 @Profile(value = "jpadao")
-public class CustomerServiceJPADAOImpl implements CustomerService {
+public class CustomerServiceJPADAOImpl extends AbstractJPADAOService implements CustomerService {
 
-    private EntityManagerFactory emf;
+    private EncryptionService encryptionService;
 
-    @PersistenceUnit
-    public void setEmf(EntityManagerFactory emf) {
-        this.emf = emf;
+    @Autowired
+    public void setEncryptionService(EncryptionService encryptionService) {
+        this.encryptionService = encryptionService;
     }
+
 
     @Override
     public List<Customer> listAll() {
@@ -43,6 +47,10 @@ public class CustomerServiceJPADAOImpl implements CustomerService {
         EntityManager em = emf.createEntityManager();
 
         em.getTransaction().begin();
+        if(domainObject.getUser()!=null && domainObject.getUser().getPassword()!=null){
+            domainObject.getUser().setEncryptedPassword(
+                    encryptionService.encryptString(domainObject.getUser().getPassword()));
+        }
         Customer savedCustomer = em.merge(domainObject);
         em.getTransaction().commit();
         return savedCustomer;

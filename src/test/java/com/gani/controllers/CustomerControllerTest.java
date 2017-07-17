@@ -1,5 +1,6 @@
 package com.gani.controllers;
 
+import com.gani.domain.Address;
 import com.gani.domain.Customer;
 import com.gani.services.CustomerService;
 
@@ -7,14 +8,17 @@ import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -24,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Gani on 7/11/17.
  */
+
 public class CustomerControllerTest {
 
 
@@ -133,13 +138,17 @@ public class CustomerControllerTest {
         customer.setLastName(lastName);
         customer.setEmail(email);
         customer.setPhoneNumber(phoneNumber);
-        customer.setAddressLine1(addressLine1);
-        customer.setAddressLine2(addressLine2);
-        customer.setCity(city);
-        customer.setState(state);
-        customer.setZipCode(zipCode);
 
-        when(customerService.createOrUpdate(Matchers.<Customer>any())).thenReturn(customer);
+        Address billingAddress = new Address();
+        billingAddress.setAddressLine1(addressLine1);
+        billingAddress.setAddressLine2(addressLine2);
+        billingAddress.setCity(city);
+        billingAddress.setState(state);
+        billingAddress.setZipCode(zipCode);
+        customer.setBillingAddress(billingAddress);
+
+
+       when(customerService.createOrUpdate(Matchers.<Customer>any())).thenReturn(customer);
 
         mockMvc.perform(post("/customer")
                 .param("id","1")
@@ -147,24 +156,34 @@ public class CustomerControllerTest {
                 .param("lastName",lastName)
                 .param("email",email)
                 .param("phoneNumber",phoneNumber)
-                .param("addressLine1",addressLine1)
-                .param("addressLine2",addressLine2)
-                .param("city",city)
-                .param("state",state)
-                .param("zipCode",zipCode))
+                .param("billingAddress.addressLine1",addressLine1)
+                .param("billingAddress.addressLine2",addressLine2)
+                .param("billingAddress.city",city)
+                .param("billingAddress.state",state)
+                .param("billingAddress.zipCode",zipCode))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/customer/show/"+id))
                 .andExpect(model().attribute("customer",instanceOf(Customer.class)))
-                .andExpect(model().attribute("customer",hasProperty("id",is(id))))
-                .andExpect(model().attribute("customer",hasProperty("firstName",is(firstName))))
-                .andExpect(model().attribute("customer",hasProperty("lastName",is(lastName))))
-                .andExpect(model().attribute("customer",hasProperty("email",is(email))))
-                .andExpect(model().attribute("customer",hasProperty("phoneNumber",is(phoneNumber))))
-                .andExpect(model().attribute("customer",hasProperty("addressLine1",is(addressLine1))))
-                .andExpect(model().attribute("customer",hasProperty("addressLine2",is(addressLine2))))
-                .andExpect(model().attribute("customer",hasProperty("city",is(city))))
-                .andExpect(model().attribute("customer",hasProperty("state",is(state))))
-                .andExpect(model().attribute("customer",hasProperty("zipCode",is(zipCode))));
+                .andExpect(model().attribute("customer",sameBeanAs(customer)));
+
+//                .andExpect(model().attribute("customer",hasProperty("id",is(id))))
+//                .andExpect(model().attribute("customer",hasProperty("firstName",is(firstName))))
+//                .andExpect(model().attribute("customer",hasProperty("lastName",is(lastName))))
+//                .andExpect(model().attribute("customer",hasProperty("email",is(email))))
+//                .andExpect(model().attribute("customer",hasProperty("phoneNumber",is(phoneNumber))))
+//                .andExpect(model().attribute("customer",hasProperty(
+//                        "billingAddress",hasProperty("addressLine1",is(addressLine1)))))
+//                .andExpect(model().attribute("customer",hasProperty(
+//                        "billingAddress",hasProperty("addressLine1",is(addressLine1)))))
+//                .andExpect(model().attribute("customer",hasProperty(
+//                        "billingAddress",hasProperty("addressLine2",is(addressLine2)))))
+//                .andExpect(model().attribute("customer",hasProperty(
+//                        "billingAddress",hasProperty("city",is(city)))))
+//                .andExpect(model().attribute("customer",hasProperty(
+//                        "billingAddress", hasProperty("state",is(state)))))
+//                .andExpect(model().attribute("customer",hasProperty(
+//                        "billingAddress",hasProperty("zipCode",is(zipCode)))))
+//                .andExpect(model().attribute("customer",hasProperty("billingAddress",sameBeanAs(billingAddress))));
 
         ArgumentCaptor<Customer> boundCustomer = ArgumentCaptor.forClass(Customer.class);
         verify(customerService).createOrUpdate(boundCustomer.capture());
@@ -174,12 +193,15 @@ public class CustomerControllerTest {
         assertEquals(lastName, boundCustomer.getValue().getLastName());
         assertEquals(email, boundCustomer.getValue().getEmail());
         assertEquals(phoneNumber, boundCustomer.getValue().getPhoneNumber());
-        assertEquals(addressLine1, boundCustomer.getValue().getAddressLine1());
-        assertEquals(addressLine2, boundCustomer.getValue().getAddressLine2());
-        assertEquals(city, boundCustomer.getValue().getCity());
-        assertEquals(state, boundCustomer.getValue().getState());
-        assertEquals(zipCode, boundCustomer.getValue().getZipCode());
 
+        //using shazamcrest library the below line does the same thing as the commented out parts
+        assertThat(boundCustomer.getValue().getBillingAddress(),sameBeanAs(billingAddress));
+
+//        assertEquals(addressLine1, boundCustomer.getValue().getBillingAddress().getAddressLine1());
+//        assertEquals(addressLine2, boundCustomer.getValue().getBillingAddress().getAddressLine2());
+//        assertEquals(city, boundCustomer.getValue().getBillingAddress().getCity());
+//        assertEquals(state, boundCustomer.getValue().getBillingAddress().getState());
+//        assertEquals(zipCode, boundCustomer.getValue().getBillingAddress().getZipCode());
 
     }
 }

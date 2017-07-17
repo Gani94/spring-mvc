@@ -1,6 +1,10 @@
 package com.gani.domain;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by Gani on 7/7/17.
@@ -12,42 +16,25 @@ import javax.persistence.*;
 //        All properties are strings. All should be private and have getters and setters.
 
 @Entity
-public class Customer implements DomainObject{
+public class Customer extends AbstractDomainClass{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-
-    @Version
-    private Integer version;
 
     private String firstName;
     private String lastName;
     private String email;
     private String phoneNumber;
-    private String addressLine1;
-    private String addressLine2;
-    private String city;
-    private String state;
-    private String zipCode;
 
-    @Override
-    public Integer getId() {
-        return id;
-    }
+    @Embedded
+    private Address billingAddress;
 
-    @Override
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    @Embedded
+    private Address shippingAddress;
 
-    public Integer getVersion() {
-        return version;
-    }
 
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
+    @OneToOne (cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    private User user;
+
+
 
     public String getFirstName() {
         return firstName;
@@ -81,46 +68,29 @@ public class Customer implements DomainObject{
         this.phoneNumber = phoneNumber;
     }
 
-    public String getAddressLine1() {
-        return addressLine1;
+    public Address getBillingAddress() {
+        return billingAddress;
     }
 
-    public void setAddressLine1(String addressLine1) {
-        this.addressLine1 = addressLine1;
+    public void setBillingAddress(Address billingAddress) {
+        this.billingAddress = billingAddress;
     }
 
-    public String getAddressLine2() {
-        return addressLine2;
+    public Address getShippingAddress() {
+        return shippingAddress;
     }
 
-    public void setAddressLine2(String addressLine2) {
-        this.addressLine2 = addressLine2;
+    public void setShippingAddress(Address shippingAddress) {
+        this.shippingAddress = shippingAddress;
     }
 
-    public String getCity() {
-        return city;
+    public User getUser() {
+        return user;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setUser(User user) {
+        this.user = user;
     }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getZipCode() {
-        return zipCode;
-    }
-
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
-    }
-
 
 
 }

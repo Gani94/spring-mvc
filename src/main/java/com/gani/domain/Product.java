@@ -1,42 +1,26 @@
 package com.gani.domain;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * Created by Gani on 7/5/17.
  */
 
 @Entity
-public class Product implements DomainObject{
+public class Product extends AbstractDomainClass{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
 
-    @Version
-    private int version;
     private String description;
     private BigDecimal price;
     private String imageUrl;
 
-    @Override
-    public Integer getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
-    }
 
     public String getDescription() {
         return description;
@@ -61,4 +45,5 @@ public class Product implements DomainObject{
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
 }

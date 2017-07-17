@@ -1,6 +1,7 @@
-package com.gani.services;
+package com.gani.services.jpaServices;
 
 import com.gani.domain.Product;
+import com.gani.services.ProductService;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -15,14 +16,7 @@ import java.util.List;
 
 @Service
 @Profile(value = "jpadao")
-public class ProductServiceJPADAOImpl implements ProductService {
-
-    private EntityManagerFactory emf;
-
-    @PersistenceUnit
-    public void setEmf(EntityManagerFactory emf) {
-        this.emf = emf;
-    }
+public class ProductServiceJPADAOImpl extends AbstractJPADAOService implements ProductService {
 
     @Override
     public List<Product> listAll() {

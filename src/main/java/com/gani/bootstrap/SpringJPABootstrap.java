@@ -1,5 +1,6 @@
 package com.gani.bootstrap;
 
+import com.gani.domain.Address;
 import com.gani.domain.Customer;
 import com.gani.domain.Product;
 import com.gani.services.CustomerService;
@@ -33,22 +34,29 @@ public class SpringJPABootstrap implements ApplicationListener<ContextRefreshedE
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        loadProducts();
         loadCustomers();
+        loadProducts();
     }
 
     private void loadCustomers() {
+
 
         Customer customer1 = new Customer();
         customer1.setFirstName("Teja");
         customer1.setLastName("Tummuri");
         customer1.setEmail("tejaganesh94@gmail.com");
         customer1.setPhoneNumber("9726038221");
-        customer1.setAddressLine1("3477 Lily Way");
-        customer1.setAddressLine2("Apt 226");
-        customer1.setCity("San Jose");
-        customer1.setState("CA");
-        customer1.setZipCode("95134");
+
+        Address billingAddress1 = new Address();
+
+        billingAddress1.setAddressLine1("3477 Lily Way");
+        billingAddress1.setAddressLine2("Apt 226");
+        billingAddress1.setCity("San Jose");
+        billingAddress1.setState("CA");
+        billingAddress1.setZipCode("95134");
+
+
+        customer1.setBillingAddress(billingAddress1);
 
         customerService.createOrUpdate(customer1);
 
@@ -57,11 +65,15 @@ public class SpringJPABootstrap implements ApplicationListener<ContextRefreshedE
         customer2.setLastName("Tummuri");
         customer2.setEmail("tummuri1967@gmail.com");
         customer2.setPhoneNumber("9848520512");
-        customer2.setAddressLine1("H.No.29 Lahari Jade Residenza");
-        customer2.setAddressLine2("Bhanoor Village");
-        customer2.setCity("Hyderabad");
-        customer2.setState("TG");
-        customer2.setZipCode("502305");
+
+        Address billingAddress2 = new Address();
+        billingAddress2.setAddressLine1("H.No.29 Lahari Jade Residenza");
+        billingAddress2.setAddressLine2("Bhanoor Village");
+        billingAddress2.setCity("Hyderabad");
+        billingAddress2.setState("TG");
+        billingAddress2.setZipCode("502305");
+
+        customer2.setBillingAddress(billingAddress2);
 
         customerService.createOrUpdate(customer2);
     }
@@ -101,6 +113,5 @@ public class SpringJPABootstrap implements ApplicationListener<ContextRefreshedE
         productService.createOrUpdate(product5);
 
     }
-
 
 }

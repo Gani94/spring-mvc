@@ -1,9 +1,7 @@
-package com.gani.services;
+package com.gani.services.mapServices;
 
-import com.gani.bootstrap.SpringJPABootstrap;
+
 import com.gani.domain.DomainObject;
-import org.springframework.context.event.ContextRefreshedEvent;
-
 import java.util.*;
 
 /**
@@ -11,7 +9,7 @@ import java.util.*;
  */
 public abstract class AbstractMapService{
 
-    protected Map<Integer, DomainObject> domainObjectMap;
+    private Map<Integer, DomainObject> domainObjectMap;
 
     public AbstractMapService(){
         domainObjectMap = new HashMap<>();
@@ -47,6 +45,9 @@ public abstract class AbstractMapService{
     }
 
     public Integer getNextKey(){
+
+        if(domainObjectMap.size()==0)
+            return 1;
         return Collections.max(domainObjectMap.keySet())+1;
     }
 
