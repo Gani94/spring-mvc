@@ -1,5 +1,7 @@
 package com.gani.services.mapServices;
 
+import com.gani.commands.CustomerForm;
+import com.gani.converters.CustomerFormToCustomer;
 import com.gani.domain.Customer;
 import com.gani.domain.DomainObject;
 import com.gani.services.CustomerService;
@@ -58,6 +60,12 @@ public class CustomerServiceMapImpl extends AbstractMapService implements Custom
 //    }
 
     private EncryptionService encryptionService;
+    private CustomerFormToCustomer customerFormToCustomer;
+
+    @Autowired
+    public void setCustomerFormToCustomer(CustomerFormToCustomer customerFormToCustomer) {
+        this.customerFormToCustomer = customerFormToCustomer;
+    }
 
     @Autowired
     public void setEncryptionService(EncryptionService encryptionService) {
@@ -77,6 +85,8 @@ public class CustomerServiceMapImpl extends AbstractMapService implements Custom
 
     @Override
     public void delete(Integer id) {
+        Customer u = (Customer) domainObjectMap.get(id);
+        u.getUser().setCustomer(null);
         super.delete(id);
     }
 
@@ -96,4 +106,17 @@ public class CustomerServiceMapImpl extends AbstractMapService implements Custom
         return super.getNextKey();
     }
 
+    @Override
+    public Customer createOrUpdateCustomerForm(CustomerForm customerForm) {
+
+        Customer newCustomer = customerFormToCustomer.convert(customerForm);
+
+        if(newCustomer.getUser().getId()!=null){
+            Customer existingCustomer = getById(newCustomer.getId());
+
+            newCustomer.getUser().setEnabled(existingCustomer.getUser().isEnabled());
+        }
+
+        return createOrUpdate(newCustomer);
+    }
 }

@@ -48,6 +48,8 @@ public class UserServiceMapImpl extends AbstractMapService implements UserServic
 
     @Override
     public void delete(Integer id) {
+       User u = (User) domainObjectMap.get(id);
+       u.getCustomer().setUser(null);
         super.delete(id);
     }
 

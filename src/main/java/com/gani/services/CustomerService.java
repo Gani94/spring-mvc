@@ -1,5 +1,6 @@
 package com.gani.services;
 
+import com.gani.commands.CustomerForm;
 import com.gani.domain.Customer;
 
 import java.util.List;
@@ -9,4 +10,5 @@ import java.util.List;
  */
 public interface CustomerService extends CRUDService<Customer>{
 
+    Customer createOrUpdateCustomerForm(CustomerForm customerForm);
 }

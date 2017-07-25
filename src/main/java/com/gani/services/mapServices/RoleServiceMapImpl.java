@@ -1,25 +1,25 @@
 package com.gani.services.mapServices;
 
 import com.gani.domain.DomainObject;
-import com.gani.domain.Order;
-import com.gani.services.CRUDService;
-import com.gani.services.OrderService;
+import com.gani.domain.Role;
+import com.gani.services.RoleService;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
- * Created by Gani on 7/17/17.
+ * Created by Gani on 7/21/17.
  */
 
 @Service
 @Profile("mapService")
-public class OrderServiceMapImpl extends AbstractMapService implements OrderService {
+public class RoleServiceMapImpl extends AbstractMapService implements RoleService{
 
     @Override
-    public Order createOrUpdate(Order domainObject) {
-        return (Order) super.createOrUpdate(domainObject);
+    public Role createOrUpdate(Role domainObject) {
+
+        return (Role) super.createOrUpdate(domainObject);
     }
 
     @Override
@@ -28,10 +28,9 @@ public class OrderServiceMapImpl extends AbstractMapService implements OrderServ
     }
 
     @Override
-    public Order getById(Integer id) {
-        return (Order) super.getById(id);
+    public Role getById(Integer id) {
+        return (Role) super.getById(id);
     }
-
 
     @Override
     public void delete(Integer id) {

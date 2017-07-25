@@ -1,9 +1,5 @@
 package com.gani.domain;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;

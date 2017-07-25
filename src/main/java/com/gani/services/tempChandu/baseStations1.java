@@ -1,12 +1,11 @@
 package com.gani.services.tempChandu;
 
-import java.io.*;
 import java.util.*;
 
 
-public class baseStations {
+public class baseStations1 {
 
-    private float[][] matrix;
+    private int[][] matrix;
     private int totalCpesToBeCovered;
     private int sectorLimit;
     private int cpes;
@@ -53,11 +52,11 @@ public class baseStations {
         this.totalCpesToBeCovered = totalCpesToBeCovered;
     }
 
-    public float[][] getMatrix() {
+    public int[][] getMatrix() {
         return matrix;
     }
 
-    public void setMatrix(float[][] matrix) {
+    public void setMatrix(int[][] matrix) {
         this.matrix = matrix;
     }
 
@@ -67,11 +66,11 @@ public class baseStations {
         Map<Integer,ArrayList<Integer>> tempCpeSectorMap;//temp map to store best possible sector for a given cpe
         int bestSector,cpesCovered=0,currentLimit=0;
         int[] sectorRankings = new int[matrix[0].length];
-        float[][] bestSectorVsCPEs;
+        int[][] bestSectorVsCPEs;
         boolean[] cpesalloted = new boolean[matrix.length];
 
         while(cpesCovered< totalCpesToBeCovered) {
-        	tempCpeSectorMap = new HashMap<>();
+            tempCpeSectorMap = new HashMap<>();
 
             for (int cpe = 0; cpe < matrix.length; cpe++) {//for each cp, find the sector best suited for it
                 if(cpesalloted[cpe]) {
@@ -97,21 +96,24 @@ public class baseStations {
 
             int index=0;
             while(currentLimit>0 && cpesCovered++<totalCpesToBeCovered){
-            	cpeSectorMap.put((int)bestSectorVsCPEs[index][1],bestSector);
-                cpesalloted[(int)bestSectorVsCPEs[index][1]]=true;
+                cpeSectorMap.put(bestSectorVsCPEs[index][1],bestSector);
+                cpesalloted[bestSectorVsCPEs[index][1]]=true;
                 currentLimit--;
                 index++;
             }
 
+
             //clean up
             Arrays.fill(sectorRankings, 0);//reset rankings
             removeSector(bestSector);//remove the sector from further iterations
+
         }
+
         return cpeSectorMap;
     }
 
-    private float[][] sortCpeMap(ArrayList<Integer> cps, int bestSector) {//create 2D map of cpe index and cpe value and then sort
-        float[][] tempMap = new float[cps.size()][2];
+    private int[][] sortCpeMap(ArrayList<Integer> cps, int bestSector) {//create 2D map of cpe index and cpe value and then sort
+        int[][] tempMap = new int[cps.size()][2];
         int index=0;
         for (int cp:cps) {
             tempMap[index][0]=matrix[cp][bestSector];
@@ -128,7 +130,7 @@ public class baseStations {
         }
     }
 
-    private float[][] mySorter(float[][] map){//to sort cps based on their values
+    private int[][] mySorter(int[][] map){//to sort cps based on their values
         Arrays.sort(map, (o1, o2) -> o1[0]<o2[0]? 1:-1);
 
         return map;
@@ -142,68 +144,40 @@ public class baseStations {
         }
         return maxIndex;
     }
-    
-    public float[][] csvToArray (String fileName)
-    {
-    	float[][] matrix = null;
-		int x=0, y=0;
-    	try
-        {
-		BufferedReader in = new BufferedReader(new FileReader(fileName));
 
-			String line;
-			while ((line = in.readLine()) != null)	//file reading
-			{
-			   String[] values = line.split(",");
-			   for (String str : values)
-			   {
-			      double str_double = Double.parseDouble(str);
-			      matrix[x][y]=(float) str_double;
-			      System.out.print(matrix[x][y] + " ");
-			      y=y+1; //you have inserted a value to the former y, need to increment
-			   }
-			   x=x+1; // finished the row, need to increment the row number
-			   System.out.println(""); // print a new row.
-			   in.close();
-			}
-        }
-    	catch( IOException ioException ) {}
-		return matrix;
-    }
-    
     public static void main(String[] args)
     {
-    	baseStations bs = new baseStations();
-    	System.out.println("Enter the File path");
-//    	System.out.println("Enter the number of CPEs and Sectors");
-    	Scanner scan = new Scanner(System.in);
-//    	bs.setCpes(scan.nextInt());
-//    	bs.setSectors(scan.nextInt());
-//    	System.out.println("Enter the path loss values");
-//
-//    	float[][] tempMatrix = new float[bs.getCpes()][bs.getSectors()];
-//
-//        for(int i = 0; i< bs.getCpes(); i++){
-//            for(int j = 0 ;j< bs.getSectors(); j++){
-//            	float value = scan.nextFloat();
-//                tempMatrix[i][j] = value;
-//            }  	
-//        }
 
 
+        baseStations1 bs = new baseStations1();
+        System.out.println("Enter the number of CPEs and Sectors");
+        Scanner scan = new Scanner(System.in);
+        bs.setCpes(scan.nextInt());
+        bs.setSectors(scan.nextInt());
+        System.out.println("Enter the path loss values");
 
+        int[][] tempMatrix = new int[bs.getCpes()][bs.getSectors()];
 
-        bs.setMatrix(bs.csvToArray(scan.next()));
+        for(int i = 0; i< bs.getCpes(); i++){
+            for(int j = 0 ;j< bs.getSectors(); j++){
+                int value = scan.nextInt();
+                tempMatrix[i][j] = value;
+            }
+        }
+        bs.setMatrix(tempMatrix);
 
         System.out.println("Enter the coverage percent");
         int cov = scan.nextInt();
         bs.totalCpesToBeCovered = (int) ( Math.ceil((double)cov*bs.getCpes()/100));
+        System.out.println(bs.totalCpesToBeCovered);
         System.out.println("Enter the threshold limit for sector coverage");
         bs.sectorLimit = scan.nextInt();
         Map<Integer,Integer> myMap= bs.optimalSectors();
 
         for (Map.Entry entry:myMap.entrySet()) {
-            System.out.println("CPE "+((int)entry.getKey()+1)+" is assigned to sector "+((int)entry.getValue()+1));
+
+            System.out.println("CP "+(int)entry.getKey()+1+" is assigned to sector "+(int)entry.getValue()+1);
+
         }
         scan.close();
     }

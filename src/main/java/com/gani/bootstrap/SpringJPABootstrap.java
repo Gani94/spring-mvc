@@ -1,16 +1,17 @@
 package com.gani.bootstrap;
 
-import com.gani.domain.Address;
-import com.gani.domain.Customer;
-import com.gani.domain.Product;
-import com.gani.services.CustomerService;
+import com.gani.domain.*;
+import com.gani.enums.OrderStatus;
 import com.gani.services.ProductService;
+import com.gani.services.RoleService;
+import com.gani.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Created by Gani on 7/11/17.
@@ -20,11 +21,12 @@ import java.math.BigDecimal;
 public class SpringJPABootstrap implements ApplicationListener<ContextRefreshedEvent>{
 
     private ProductService productService;
-    private CustomerService customerService;
+    private UserService userService;
+    private RoleService roleService;
 
     @Autowired
-    public void setCustomerService(CustomerService customerService) {
-        this.customerService = customerService;
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 
     @Autowired
@@ -32,13 +34,82 @@ public class SpringJPABootstrap implements ApplicationListener<ContextRefreshedE
         this.productService=productService;
     }
 
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
-        loadCustomers();
-        loadProducts();
+    @Autowired
+    public void setRoleService(RoleService roleService) {
+        this.roleService = roleService;
     }
 
-    private void loadCustomers() {
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        loadUsersAndCustomers();
+        loadProducts();
+        loadCarts();
+        loadOrderHistory();
+        loadRoles();
+        assignUsersToDefaultRole();
+    }
+
+    private void assignUsersToDefaultRole() {
+        List<User> users = (List<User>) userService.listAll();
+        List<Role> roles = (List<Role>) roleService.listAll();
+
+
+            roles.forEach(role -> {
+                if(role.getRole().equalsIgnoreCase("customer")){
+                    users.forEach(user ->{
+                        user.addRole(role);
+                        userService.createOrUpdate(user);
+                    });
+                }
+        });
+    }
+
+    private void loadRoles() {
+        Role role = new Role();
+        role.setRole("Customer");
+        roleService.createOrUpdate(role);
+
+
+    }
+
+    private void loadOrderHistory() {
+        List<User> users = (List<User>) userService.listAll();
+        List<Product> products = (List<Product>) productService.listAll();
+
+        users.forEach(user -> {
+            Order order1 = new Order();
+            order1.setCustomer(user.getCustomer());
+            order1.setOrderStatus(OrderStatus.SHIPPED);
+
+            products.forEach(product -> {
+                OrderDetail orderDetail = new OrderDetail();
+                orderDetail.setProduct(product);
+                orderDetail.setQuantity(8);
+
+                order1.addOrderDetail(orderDetail);
+            });
+
+
+        });
+    }
+
+    private void loadCarts() {
+
+        List<User> users = (List<User>) userService.listAll();
+        List<Product> products = (List<Product>) productService.listAll();
+
+        users.forEach(user -> {
+            user.setCart(new Cart());
+            CartDetail cartDetail = new CartDetail();
+            cartDetail.setProduct(products.get(2));
+            cartDetail.setQuantity(2);
+            user.getCart().addCarDetail(cartDetail);
+            userService.createOrUpdate(user);
+        });
+
+    }
+
+    private void loadUsersAndCustomers() {
 
 
         Customer customer1 = new Customer();
@@ -58,7 +129,13 @@ public class SpringJPABootstrap implements ApplicationListener<ContextRefreshedE
 
         customer1.setBillingAddress(billingAddress1);
 
-        customerService.createOrUpdate(customer1);
+        User user1 = new User();
+        user1.setUserName("gani94");
+        user1.setPassword("abc123");
+        user1.setCustomer(customer1);
+
+
+        userService.createOrUpdate(user1);
 
         Customer customer2 = new Customer();
         customer2.setFirstName("Peddakapu");
@@ -75,7 +152,12 @@ public class SpringJPABootstrap implements ApplicationListener<ContextRefreshedE
 
         customer2.setBillingAddress(billingAddress2);
 
-        customerService.createOrUpdate(customer2);
+        User user2 = new User();
+        user2.setUserName("tsnaidu");
+        user2.setPassword("abc1234");
+        user2.setCustomer(customer2);
+
+        userService.createOrUpdate(user2);
     }
 
     private void loadProducts() {

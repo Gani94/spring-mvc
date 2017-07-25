@@ -19,7 +19,7 @@ import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(JPAIntegrationConfig.class)
-@ActiveProfiles({"jpadao"})
+@ActiveProfiles({"springdatajpa"})
 public class CustomerServiceJPADAOImplTest {
 
     private CustomerService customerService;

@@ -1,7 +1,7 @@
 package com.gani.services.jpaServices;
 
-import com.gani.domain.Order;
-import com.gani.services.OrderService;
+import com.gani.domain.Role;
+import com.gani.services.RoleService;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -9,42 +9,42 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 /**
- * Created by Gani on 7/20/17.
+ * Created by Gani on 7/21/17.
  */
 
 @Service
 @Profile("jpadao")
-public class OrderServiceJPADAOImpl extends AbstractJPADAOService implements OrderService{
+public class RoleServiceJPADAOImpl extends AbstractJPADAOService implements RoleService {
     @Override
-    public List<Order> listAll() {
+    public List<Role> listAll() {
+
         EntityManager em = emf.createEntityManager();
 
-        return em.createQuery("from Order_Table",Order.class).getResultList();
+        return em.createQuery("from Role",Role.class).getResultList();
     }
 
     @Override
-    public Order getById(Integer id) {
+    public Role getById(Integer id) {
         EntityManager em = emf.createEntityManager();
 
-        return em.find(Order.class,id);
+        return em.find(Role.class,id);
     }
 
     @Override
-    public Order createOrUpdate(Order domainObject) {
+    public Role createOrUpdate(Role domainObject) {
         EntityManager em = emf.createEntityManager();
-
         em.getTransaction().begin();
-        Order savedOrder = em.merge(domainObject);
+        Role savedRole = em.merge(domainObject);
         em.getTransaction().commit();
-        return savedOrder;
+        return savedRole;
     }
 
     @Override
     public void delete(Integer id) {
-
         EntityManager em = emf.createEntityManager();
+
         em.getTransaction().begin();
-        em.remove(em.find(Order.class,id));
+        em.remove(getById(id));
         em.getTransaction().commit();
     }
 }

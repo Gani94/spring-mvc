@@ -5,4 +5,5 @@ package com.gani.enums;
  */
 public enum OrderStatus {
     NEW, ALLOCATED, SHIPPED
+
 }

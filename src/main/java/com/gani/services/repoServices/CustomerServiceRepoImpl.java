@@ -1,27 +1,28 @@
-package com.gani.services.jpaServices;
+package com.gani.services.repoServices;
 
 import com.gani.commands.CustomerForm;
 import com.gani.converters.CustomerFormToCustomer;
 import com.gani.domain.Customer;
+import com.gani.repositories.CustomerRepository;
 import com.gani.services.CustomerService;
 import com.gani.services.security.EncryptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Gani on 7/12/17.
+ * Created by Gani on 7/24/17.
  */
-
 @Service
-@Profile(value = "jpadao")
-public class CustomerServiceJPADAOImpl extends AbstractJPADAOService implements CustomerService {
+@Profile({"springdatajpa"})
+public class CustomerServiceRepoImpl implements CustomerService {
 
+
+
+    private CustomerRepository customerRepository;
     private EncryptionService encryptionService;
     private CustomerFormToCustomer customerFormToCustomer;
 
@@ -35,46 +36,38 @@ public class CustomerServiceJPADAOImpl extends AbstractJPADAOService implements 
         this.encryptionService = encryptionService;
     }
 
+    @Autowired
+    public void setCustomerRepository(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
+
 
     @Override
     public List<Customer> listAll() {
-
-        EntityManager em = emf.createEntityManager();
-
-        return em.createQuery("from Customer",Customer.class).getResultList();
+        List<Customer> customers = new ArrayList<>();
+        customerRepository.findAll().forEach(customers :: add);
+        return customers;
     }
 
     @Override
     public Customer getById(Integer id) {
-        EntityManager em = emf.createEntityManager();
-        return em.find(Customer.class,id);
+        return customerRepository.findOne(id);
     }
 
     @Override
     public Customer createOrUpdate(Customer domainObject) {
-        EntityManager em = emf.createEntityManager();
 
-        em.getTransaction().begin();
         if(domainObject.getUser()!=null && domainObject.getUser().getPassword()!=null){
             domainObject.getUser().setEncryptedPassword(
                     encryptionService.encryptString(domainObject.getUser().getPassword()));
         }
-        Customer savedCustomer = em.merge(domainObject);
-        em.getTransaction().commit();
-        return savedCustomer;
+        return customerRepository.save(domainObject);
     }
 
     @Override
     public void delete(Integer id) {
-        EntityManager em = emf.createEntityManager();
 
-        em.getTransaction().begin();
-        Customer deleteCustomer = em.find(Customer.class,id);
-        if(deleteCustomer.getUser()!=null)
-            deleteCustomer.getUser().setCustomer(null);
-        deleteCustomer.setUser(null);
-        em.remove(em.merge(deleteCustomer));
-        em.getTransaction().commit();
+        customerRepository.delete(id);
     }
 
     @Override

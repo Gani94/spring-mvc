@@ -1,5 +1,6 @@
 package com.gani.controllers;
 
+import com.gani.commands.CustomerForm;
 import com.gani.domain.Customer;
 import com.gani.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,21 +42,34 @@ public class CustomerController {
 
     @RequestMapping(value="/new")
     public String newCustomer(Model model){
-        model.addAttribute("customer",new Customer());
+        model.addAttribute("customer",new CustomerForm());
         return "customer/customerform";
     }
 
     @RequestMapping(method= RequestMethod.POST)
-    public String createOrUpdateCustomer(Customer customer){
+    public String createOrUpdateCustomer(CustomerForm customerform){
 
-        Customer savedCustomer = customerService.createOrUpdate(customer);
+        Customer savedCustomer = customerService.createOrUpdateCustomerForm(customerform);
         return "redirect:/customer/show/"+savedCustomer.getId();
     }
 
     @RequestMapping(value="/edit/{id}")
     public String editCustomer(@PathVariable int id, Model model){
 
-        model.addAttribute("customer",customerService.getById(id));
+        Customer customer = customerService.getById(id);
+        CustomerForm customerForm = new CustomerForm();
+
+        customerForm.setCustomerId(customer.getId());
+        customerForm.setCustomerVersion(customer.getVersion());
+        customerForm.setEmail(customer.getEmail());
+        customerForm.setFirstName(customer.getFirstName());
+        customerForm.setLastName(customer.getLastName());
+        customerForm.setPhoneNumber(customer.getPhoneNumber());
+        customerForm.setUserId(customer.getUser().getId());
+        customerForm.setUserName(customer.getUser().getUserName());
+        customerForm.setUserVersion(customer.getUser().getVersion());
+
+        model.addAttribute("customer",customerForm);
         return "customer/customerform";
     }
 

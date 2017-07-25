@@ -29,7 +29,7 @@ public class UserServiceJPADAOImpl extends AbstractJPADAOService implements User
     public List<User> listAll() {
         EntityManager em = emf.createEntityManager();
 
-        return em.createQuery("from user",User.class).getResultList();
+        return em.createQuery("from User",User.class).getResultList();
 
     }
 
@@ -50,6 +50,7 @@ public class UserServiceJPADAOImpl extends AbstractJPADAOService implements User
         }
 
         User savedUser = em.merge(domainObject);
+
         em.getTransaction().commit();
 
         return savedUser;
@@ -58,11 +59,13 @@ public class UserServiceJPADAOImpl extends AbstractJPADAOService implements User
     @Override
     public void delete(Integer id) {
 
-
-
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
-        em.remove(em.find(User.class,id));
+        User deleteUser = em.find(User.class,id);
+        if(deleteUser.getCustomer()!=null)
+            deleteUser.getCustomer().setUser(null);
+        deleteUser.setCustomer(null);
+        em.remove(em.merge(deleteUser));
         em.getTransaction().commit();
     }
 }

@@ -9,7 +9,7 @@ import java.util.*;
  */
 public abstract class AbstractMapService{
 
-    private Map<Integer, DomainObject> domainObjectMap;
+    protected Map<Integer, DomainObject> domainObjectMap;
 
     public AbstractMapService(){
         domainObjectMap = new HashMap<>();

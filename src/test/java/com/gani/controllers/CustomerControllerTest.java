@@ -1,5 +1,6 @@
 package com.gani.controllers;
 
+import com.gani.commands.CustomerForm;
 import com.gani.domain.Address;
 import com.gani.domain.Customer;
 import com.gani.services.CustomerService;
@@ -87,7 +88,7 @@ public class CustomerControllerTest {
         mockMvc.perform(get("/customer/new"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("customer/customerform"))
-                .andExpect(model().attribute("customer",instanceOf(Customer.class)));
+                .andExpect(model().attribute("customer",instanceOf(CustomerForm.class)));
 
     }
 
@@ -102,7 +103,7 @@ public class CustomerControllerTest {
         mockMvc.perform(get("/customer/edit/1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("customer/customerform"))
-                .andExpect(model().attribute("customer",instanceOf(Customer.class)));
+                .andExpect(model().attribute("customer",instanceOf(CustomerForm.class)));
     }
 
     @Test
