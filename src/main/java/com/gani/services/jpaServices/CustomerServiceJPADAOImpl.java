@@ -2,6 +2,7 @@ package com.gani.services.jpaServices;
 
 import com.gani.commands.CustomerForm;
 import com.gani.converters.CustomerFormToCustomer;
+import com.gani.converters.CustomerToCustomerForm;
 import com.gani.domain.Customer;
 import com.gani.services.CustomerService;
 import com.gani.services.security.EncryptionService;
@@ -24,6 +25,12 @@ public class CustomerServiceJPADAOImpl extends AbstractJPADAOService implements 
 
     private EncryptionService encryptionService;
     private CustomerFormToCustomer customerFormToCustomer;
+    private CustomerToCustomerForm customerToCustomerForm;
+
+    @Autowired
+    public void setCustomerToCustomerForm(CustomerToCustomerForm customerToCustomerForm) {
+        this.customerToCustomerForm = customerToCustomerForm;
+    }
 
     @Autowired
     public void setCustomerFormToCustomer(CustomerFormToCustomer customerFormToCustomer) {
@@ -88,5 +95,10 @@ public class CustomerServiceJPADAOImpl extends AbstractJPADAOService implements 
         }
 
         return createOrUpdate(newCustomer);
+    }
+
+    @Override
+    public CustomerForm convertToCustomerForm(Customer customer) {
+        return customerToCustomerForm.convert(customer);
     }
 }

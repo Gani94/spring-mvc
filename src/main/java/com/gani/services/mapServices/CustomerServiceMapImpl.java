@@ -2,6 +2,7 @@ package com.gani.services.mapServices;
 
 import com.gani.commands.CustomerForm;
 import com.gani.converters.CustomerFormToCustomer;
+import com.gani.converters.CustomerToCustomerForm;
 import com.gani.domain.Customer;
 import com.gani.domain.DomainObject;
 import com.gani.services.CustomerService;
@@ -61,6 +62,12 @@ public class CustomerServiceMapImpl extends AbstractMapService implements Custom
 
     private EncryptionService encryptionService;
     private CustomerFormToCustomer customerFormToCustomer;
+    private CustomerToCustomerForm customerToCustomerForm;
+
+    @Autowired
+    public void setCustomerToCustomerForm(CustomerToCustomerForm customerToCustomerForm) {
+        this.customerToCustomerForm = customerToCustomerForm;
+    }
 
     @Autowired
     public void setCustomerFormToCustomer(CustomerFormToCustomer customerFormToCustomer) {
@@ -118,5 +125,10 @@ public class CustomerServiceMapImpl extends AbstractMapService implements Custom
         }
 
         return createOrUpdate(newCustomer);
+    }
+
+    @Override
+    public CustomerForm convertToCustomerForm(Customer customer) {
+        return customerToCustomerForm.convert(customer);
     }
 }

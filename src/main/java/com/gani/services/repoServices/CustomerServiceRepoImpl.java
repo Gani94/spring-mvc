@@ -2,6 +2,7 @@ package com.gani.services.repoServices;
 
 import com.gani.commands.CustomerForm;
 import com.gani.converters.CustomerFormToCustomer;
+import com.gani.converters.CustomerToCustomerForm;
 import com.gani.domain.Customer;
 import com.gani.repositories.CustomerRepository;
 import com.gani.services.CustomerService;
@@ -25,6 +26,12 @@ public class CustomerServiceRepoImpl implements CustomerService {
     private CustomerRepository customerRepository;
     private EncryptionService encryptionService;
     private CustomerFormToCustomer customerFormToCustomer;
+    private CustomerToCustomerForm customerToCustomerForm;
+
+    @Autowired
+    public void setCustomerToCustomerForm(CustomerToCustomerForm customerToCustomerForm) {
+        this.customerToCustomerForm = customerToCustomerForm;
+    }
 
     @Autowired
     public void setCustomerFormToCustomer(CustomerFormToCustomer customerFormToCustomer) {
@@ -51,6 +58,8 @@ public class CustomerServiceRepoImpl implements CustomerService {
 
     @Override
     public Customer getById(Integer id) {
+
+
         return customerRepository.findOne(id);
     }
 
@@ -81,5 +90,10 @@ public class CustomerServiceRepoImpl implements CustomerService {
         }
 
         return createOrUpdate(newCustomer);
+    }
+
+    @Override
+    public CustomerForm convertToCustomerForm(Customer customer) {
+        return customerToCustomerForm.convert(customer);
     }
 }
