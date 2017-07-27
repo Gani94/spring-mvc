@@ -40,6 +40,7 @@ public class CustomerController {
     public String getCustomer(@PathVariable int id, Model model){
         model.addAttribute("customer",customerService.getById(id));
         return "customer/show";
+        
     }
 
     @RequestMapping(value="/new")
